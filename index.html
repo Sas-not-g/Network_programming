@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <title>Quotes</title>
+</head>
+<body onload="getQuotes()">
+  <p>Don't forget to turn the server on first!</p>
+  <p>Quote of the day</p>
+  <ul class="quote-container">
+    <li class="quote-of-the-day"></li>
+  </ul>
+  <p>Five random quotes</p>
+  <ul class="quote-container">
+    <li id="kek_1" class="quote"></li>
+    <li id="kek_2" class="quote"></li>
+    <li id="kek_3" class="quote"></li>
+    <li id="4" class="quote"></li>
+    <li id="5" class="quote"></li>
+  </ul>
+  <p>Add your own quote</p>
+  <form class="newQuote">
+      <input
+        type="text"
+        name="quoteText"
+        placeholder="Your Quote text"
+        class="quote-text-input"
+        required
+      />
+      <span class="popup__form-input-error placeName-error"></span>
+
+      <input
+        type="text"
+        name="quoteSource"
+        placeholder="Source"
+        class="quote-source-input"
+      />
+    <button class="submit-quote" type="submit">Submit</button>
+  </form>
+  <script>
+    const Autoquotes = [{text: 'first', src: 'first_src'}, {text: 'second', src: 'second_src'}, {text: 'third', src:'third_src'}];
+    function getQuotes() {
+      getDaily();
+      getFiveQuotes();
+      addThreeQuotes();
+    }
+
+    function getFiveQuotes(){
+      let quotes = [];
+      let cnt = 0
+      fetch('http://localhost:3000/',{
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        }
+      }).then((res) => res.json()).then(res => {
+        quoteList = document.querySelectorAll('.quote')
+        for (let i =0; i < 5; i++){
+        quoteList[i].textContent =res[i].text;
+      }
+      });
+    }
+
+
+    function getDaily(){
+      fetch('http://localhost:3000/daily',{
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        }
+      }).then((res) => res.json()).then(res =>{
+        document.querySelector('.quote-of-the-day').textContent = res.text
+      })
+    }
+
+    function postQuote(evt){
+      evt.preventDefault();
+      textVal = document.querySelector('.quote-text-input').value;
+      textSrc = document.querySelector('.quote-source-input').value;
+      fetch('http://localhost:3000/add',{
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: textVal,
+          source: textSrc || 'undefined'
+        })
+      }).then((res) => res.json()).then(res => console.log(res));
+    }
+
+    function addThreeQuotes(){
+      for (let j = 0; j < 3; j++){
+        fetch('http://localhost:3000/add',{
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: Autoquotes[j].text,
+            source: Autoquotes[j].src || 'undefined'
+          })
+        })
+      }
+    }
+
+    document.querySelector('.newQuote').addEventListener('submit', postQuote);
+  </script>
+</body>
+</html>

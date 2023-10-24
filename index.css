@@ -1,0 +1,23 @@
+body {
+  background-color: rgb(177, 174, 174);
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quote-container{
+  border: 1px solid black;
+  padding: 10px 25px;
+  width: 200px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: beige;
+}
+
+.newQuote{
+  display: flex;
+  flex-direction: column;
+}
+
